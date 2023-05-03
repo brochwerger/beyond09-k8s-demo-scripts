@@ -75,3 +75,28 @@ then
     $BROWSER "http://$NODE:$PORT" &> /dev/null &
     set +x
 fi
+
+if prompt "Add some messages to message board ... " "Are you done"
+then
+    echo "Cool, but what is the fuzz about K8S ?"
+fi
+
+if prompt "\e[1;33mAVAILABILITY\e[0m - let's delete the pod and see what happens ..."
+then
+    set -x
+    kubectl get pods
+    set +x
+    target=$(kubectl get pods | grep $APPNAME | awk '/Running/ {print $1}')
+    set -x
+    kubectl delete pod $target
+    sleep 1
+    kubectl get pods
+    set +x
+    echo -e "\e[0;33mK8S ensures the service continues working in case of failures 🤩🤩🤩, however ...\e[0m"
+fi
+
+if prompt "Go to browser window and refresh the page..." "Are you done"
+then
+    echo -e "\e[0;33mWe lost our data ... 😱\e[0m"
+    echo -e "\e[0;33mWhat happened to messages ? Why ?\e[0m"
+fi
