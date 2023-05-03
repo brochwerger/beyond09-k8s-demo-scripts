@@ -3,13 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 DEMO_DIR=$(dirname $SCRIPT_DIR)
 
-if [[ ! -f $SCRIPT_DIR/vars.sh ]] 
-then 
-  source $SCRIPT_DIR/setup.sh
-fi
-source $SCRIPT_DIR/vars.sh
-source $SCRIPT_DIR/common.sh
- 
+source $SCRIPT_DIR/setup.sh
 
 if prompt "To use container image in the cloud we need to upload to a registy (e.g. $REGISTRY)"
 then
@@ -37,12 +31,16 @@ then
     then
         set -x
         minikube start
-        set +x
     else
         set -x
         minikube status
-        set +x
+
+        echo "Set local minikube as default cluster"
+        KUBECONFIG=~/.kube/config 
+        kubectl config use-context minikube
     fi
+    set +x
+
 fi
 
 if prompt "Check what is running in the k8s cluster"
@@ -66,6 +64,14 @@ then
     set +x
 fi
 
-
-
-echo "DONE - Can we do better ?"
+if prompt "Find out service address and port and fire local browser"
+then
+    echo "WARN: Use NodePort services only in development"
+    PORT=$(kubectl get svc | awk -F"[:/]" '/NodePort/ {print $2}')
+    NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
+    set -x
+    kubectl get svc 
+    kubectl get node -o wide
+    $BROWSER "http://$NODE:$PORT" &> /dev/null &
+    set +x
+fi

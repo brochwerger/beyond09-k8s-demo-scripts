@@ -3,12 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 DEMO_DIR=$(dirname $SCRIPT_DIR)
 
-if [[ ! -f $SCRIPT_DIR/vars.sh ]] 
-then 
-  source $SCRIPT_DIR/setup.sh
-fi
-source $SCRIPT_DIR/vars.sh
-source $SCRIPT_DIR/common.sh
+source $SCRIPT_DIR/setup.sh
  
 if prompt "Create a new git branch and reset it to DEMO 1 commit" 
 then 
