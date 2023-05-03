@@ -1,7 +1,6 @@
 #! /usr/bin/bash
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DEMO_DIR=$(dirname $SCRIPT_DIR)
 
 source $SCRIPT_DIR/setup.sh
 
@@ -66,14 +65,7 @@ fi
 
 if prompt "Find out service address and port and fire local browser"
 then
-    echo "WARN: Use NodePort services only in development"
-    PORT=$(kubectl get svc | awk -F"[:/]" '/NodePort/ {print $2}')
-    NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
-    set -x
-    kubectl get svc 
-    kubectl get node -o wide
-    $BROWSER "http://$NODE:$PORT" &> /dev/null &
-    set +x
+    firebrowser $APPNAME-pod
 fi
 
 if prompt "Add some messages to message board ... " "Are you done"
