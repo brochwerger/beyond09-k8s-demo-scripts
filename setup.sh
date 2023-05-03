@@ -29,6 +29,17 @@ function prompt() {
     done
 }
 
+function firebrowser() {
+    echo "WARN: Use NodePort services only in development"
+    PORT=$(kubectl get svc $1 | awk -F"[:/]" '/NodePort/ {print $2}')
+    NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
+    set -x
+    kubectl get svc 
+    kubectl get node -o wide
+    $BROWSER "http://$NODE:$PORT" &> /dev/null &
+    set +x
+}
+
 if [[ ! -f $SCRIPT_DIR/vars.sh ]] 
 then 
     read -ei "demo" -p "BRANCH = " BRANCH
