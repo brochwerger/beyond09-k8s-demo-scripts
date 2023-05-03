@@ -1,16 +1,13 @@
 #! /usr/bin/bash
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DEMO_DIR=$(dirname $SCRIPT_DIR)
 
 source $SCRIPT_DIR/setup.sh
  
 if prompt "Create a new git branch and reset it to DEMO 1 commit" 
 then 
-    # DEMO1_COMMIT=$(git log --oneline main | awk '/DEMO 1/ {print $1}')
     set -x 
     git checkout -b $BRANCH
-    # git reset --hard $DEMO1_COMMIT
     git reset --hard DEMO1
     set +x
 fi
