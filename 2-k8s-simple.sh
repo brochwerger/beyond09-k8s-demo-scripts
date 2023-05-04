@@ -70,10 +70,10 @@ fi
 
 if prompt "Add some messages to message board ... " "Are you done"
 then
-    echo "Cool, but what is the fuzz about K8S ?"
+    echo_colored "Cool, but what is the fuzz about K8S ?"
 fi
 
-if prompt "\e[1;33mAVAILABILITY\e[0m - let's delete the pod and see what happens ..."
+if prompt "$FEATURE_COLOR AVAILABILITY$PRMPT_COLOR - let's delete the pod and see what happens now ..."
 then
     kill_pod "K8S ensures the service continues working in case of failures 🤩🤩🤩, however ..."
 fi    
