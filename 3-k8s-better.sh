@@ -18,7 +18,6 @@ then
     set -x 
     kubectl apply -f $MANIFESTS_DIR/01-secret.yaml
     kubectl apply -f $MANIFESTS_DIR/02-dbserver.yaml
-    kubectl get pvc
     set +x 
 fi
 
@@ -54,7 +53,8 @@ fi
     
 if prompt "Find out service address and port and fire local browser"
 then
-    fire_browser $APPNAME
+    get_url $APPNAME
+    $BROWSER $URL &> /dev/null &
 fi
 
 if prompt "$FEATURE_COLOR AVAILABILITY$PRMPT_COLOR - let's delete the pod and see what happens now ..."
@@ -62,7 +62,7 @@ then
     kill_pod "As before, K8S ensures the service continues working in case of failures but now ..."
 fi    
 
-if prompt "Go to browser window and refresh the page..." "Are you done"
+if prompt "Go to browser window and refresh the page..." "Any better ?"
 then
     echo_colored "Now we don't lose our data 🤩🤩🤩"
     echo_colored "What about the DB (still a single point of failure) ?"
@@ -81,10 +81,9 @@ fi
 
 if prompt "Check who (pod) is now serving my requests"
 then 
-    PORT=$(kubectl get svc $APPNAME | awk -F"[:/]" '/NodePort/ {print $2}')
-    NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
-    echo "while true ; do  curl -s http://$NODE:$PORT | grep \"Served\" ; sleep 1 ; done"
-    while true ; do  curl -s http://$NODE:$PORT | grep "Served" ; sleep 1 ; done
-    # while true ; do  curl -s http://$NODE:$PORT | grep "Served\|Benny" ; sleep 1 ; done
+    get_url $APPNAME
+    echo "while true ; do  curl -s $URL | grep \"Served\" ; sleep 1 ; done"
+    while true ; do  curl -s $URL | grep "Served" ; sleep 1 ; done
+    # while true ; do  curl -s $URL | grep "Served\|Benny" ; sleep 1 ; done
 fi
 

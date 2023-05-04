@@ -22,29 +22,40 @@ then
     set +x
 fi
 
-# MINIKUBE
-if prompt "Check status of minikube, if it is not running start it ..."
-then
-    nrun=$(minikube status | grep "Running"  | wc -l)
-    if [[ $nrun != 3  ]]
+echo_colored "Deploying on selected cluster - $TARGET"
+
+if [[ $TARGET == "minikube" ]] 
+then 
+    if prompt "Check status of minikube, if it is not running start it ..."
+    then
+        nrun=$(minikube status | grep "Running"  | wc -l)
+        if [[ $nrun != 3  ]]
+        then
+            set -x
+            minikube start
+        else
+            set -x
+            minikube status
+
+            echo "Set local minikube as default cluster"
+            KUBECONFIG=~/.kube/config 
+            kubectl config use-context minikube
+        fi
+        set +x
+    fi
+else
+    if prompt "Get GKE credentials ..."
     then
         set -x
-        minikube start
-    else
-        set -x
-        minikube status
-
-        echo "Set local minikube as default cluster"
-        KUBECONFIG=~/.kube/config 
-        kubectl config use-context minikube
+        gcloud container clusters get-credentials democluster --region us-central1 --project beyond09
+        set +x
     fi
-    set +x
-
 fi
 
-if prompt "Check what is running in the k8s cluster"
+if prompt "Check the k8s cluster"
 then
     set -x
+    kubectl get nodes
     kubectl get all
     set +x
 fi
@@ -65,7 +76,8 @@ fi
 
 if prompt "Find out service address and port and fire local browser"
 then
-    fire_browser $APPNAME-pod
+    get_url $APPNAME-pod
+    $BROWSER $URL &> /dev/null &
 fi
 
 if prompt "Add some messages to message board ... " "Are you done"

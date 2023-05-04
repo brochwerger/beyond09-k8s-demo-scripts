@@ -30,15 +30,27 @@ function prompt() {
     done
 }
 
+function get_url() {
+  # set -x
+  # kubectl get svc $1 
+  # kubectl get node -o wide
+  # set +x
+  PORTS=$(kubectl get --no-headers svc $1 | awk '{print $5}')
+  if [[ $TARGET == "gke" ]]
+  then 
+    HOST=$(kubectl get --no-headers svc $1 | awk '{print $4}')
+    PORT=$(echo $PORTS | awk -F":" '{print $1}')
+  else
+    HOST=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
+    PORT=$(echo $PORTS | awk -F"[:/]" '{print $2}')
+  fi
+  URL="http://$HOST:$PORT"
+}
+
 function fire_browser() {
-    echo "WARN: Use NodePort services only in development"
-    set -x
-    PORT=$(kubectl get svc $1 | awk -F"[:/]" '/NodePort/ {print $2}')
-    NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
-    kubectl get svc 
-    kubectl get node -o wide
-    $BROWSER "http://$NODE:$PORT" &> /dev/null &
-    set +x
+    URL=$(get_url messageboard)
+    echo $URL
+    $BROWSER "http://$URL" &> /dev/null &
 }
 
 function kill_pod() {
@@ -53,4 +65,3 @@ function kill_pod() {
     set +x
     echo_colored $1
 }
-

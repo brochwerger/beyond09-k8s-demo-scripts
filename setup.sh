@@ -16,11 +16,20 @@ then
     read -p "PROJECTID = " PROJECTID
     read -ei "firefox" -p "BROWSER = " BROWSER
 
+    TARGET='?'
+    until [[ $TARGET == "gke" ]] || [[ $TARGET == "minikube" ]]
+    do
+        read -ei "gke|minikube" -p "TARGET = " TARGET
+    done 
+
     echo "BRANCH=$BRANCH" > $SCRIPT_DIR/vars.sh
     echo "APPNAME=$APPNAME" >> $SCRIPT_DIR/vars.sh
     echo "REGISTRY=$REGISTRY" >> $SCRIPT_DIR/vars.sh
     echo "PROJECTID=$PROJECTID" >> $SCRIPT_DIR/vars.sh
     echo "BROWSER=$BROWSER" >> $SCRIPT_DIR/vars.sh
+    echo "TARGET=$TARGET" >> $SCRIPT_DIR/vars.sh
+    echo URL="http://0.0.0.0:9999" >> $SCRIPT_DIR/vars.sh
+
 else
     source $SCRIPT_DIR/vars.sh
 fi
