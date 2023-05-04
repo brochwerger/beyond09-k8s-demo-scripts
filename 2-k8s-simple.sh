@@ -7,9 +7,9 @@ source $SCRIPT_DIR/setup.sh
 if prompt "To use container image in the cloud we need to upload to a registy (e.g. $REGISTRY)"
 then
     set -x
-    podman login -u $PROJECTID $REGISTRY
-    podman tag  $APPNAME:1.0 $REGISTRY/$PROJECTID/$APPNAME:1.0
-    podman push $REGISTRY/$PROJECTID/$APPNAME:1.0
+    podman login -u $OWNERID $REGISTRY
+    podman tag  $APPNAME:1.0 $REGISTRY/$OWNERID/$APPNAME:1.0
+    podman push $REGISTRY/$OWNERID/$APPNAME:1.0
     set +x
 fi
 
@@ -47,7 +47,7 @@ else
     if prompt "Get GKE credentials ..."
     then
         set -x
-        gcloud container clusters get-credentials democluster --region us-central1 --project beyond09
+        gcloud container clusters get-credentials $CLUSTER --region $REGION --project $PROJECT
         set +x
     fi
 fi

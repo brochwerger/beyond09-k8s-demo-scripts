@@ -24,8 +24,8 @@ fi
 if prompt "Build and push updated container image ..."
 then
     set -x
-    podman build -t "$REGISTRY/$PROJECTID/$APPNAME:2.0" .
-    podman push "$REGISTRY/$PROJECTID/$APPNAME:2.0"
+    podman build -t "$REGISTRY/$OWNERID/$APPNAME:2.0" .
+    podman push "$REGISTRY/$OWNERID/$APPNAME:2.0"
     set +x
 fi
 
