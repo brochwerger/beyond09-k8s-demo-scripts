@@ -1,7 +1,16 @@
+FEATURE_COLOR="\e[1;32m"
+RESET_COLOR="\e[0m"
+MSG_COLOR="\e[0;33m"
+PRMPT_COLOR="\e[0;31m"
+
+function echo_colored() {
+    echo -e "$MSG_COLOR$1$RESET_COLOR"
+}
+
 function prompt() {
     echo ""
     echo "=================================================="
-    echo -e "\e[0;31m$1\e[0m"
+    echo -e "$PRMPT_COLOR$1$RESET_COLOR"
     echo ""
     while true 
     do 
@@ -23,9 +32,9 @@ function prompt() {
 
 function fire_browser() {
     echo "WARN: Use NodePort services only in development"
+    set -x
     PORT=$(kubectl get svc $1 | awk -F"[:/]" '/NodePort/ {print $2}')
     NODE=$(kubectl get nodes -o wide | awk '/minikube/ {print $6}')
-    set -x
     kubectl get svc 
     kubectl get node -o wide
     $BROWSER "http://$NODE:$PORT" &> /dev/null &
@@ -42,9 +51,6 @@ function kill_pod() {
     sleep 1
     kubectl get pods
     set +x
-    echo -e "\e[0;33m$1\e[0m"
+    echo_colored $1
 }
 
-function echo_colored() {
-    echo -e "\e[0;33m$1 \e[0m"
-}
