@@ -51,6 +51,5 @@ else
     source $SCRIPT_DIR/vars.sh
 fi
 
-exit
 
 
